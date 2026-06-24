@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AdminSidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto', minWidth: 0 }}>
         <AdminTopbar />
-        <main style={{ flex: 1, padding: '28px 28px' }}>
+        <main style={{ flex: 1, padding: '28px 28px', minWidth: 0, width: '100%', overflow: 'hidden' }}>
           {children}
         </main>
       </div>

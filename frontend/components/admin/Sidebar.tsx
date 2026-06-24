@@ -101,44 +101,62 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
       {/* Logo */}
       <div
         style={{
-          padding: collapsed ? '20px 16px' : '20px 20px',
+          padding: collapsed ? '20px 0' : '20px 20px',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'flex-start',
           gap: '12px',
           overflow: 'hidden',
           minHeight: '72px',
         }}
       >
-        <div
-          style={{
-            width: '36px', height: '36px', borderRadius: '10px',
-            background: 'linear-gradient(135deg, #3B82F6, #6366F1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <Library size={20} color="white" />
-        </div>
-        {!collapsed && (
-          <div style={{ overflow: 'hidden' }}>
-            <p style={{ color: 'white', fontSize: '0.85rem', fontWeight: 800, whiteSpace: 'nowrap', lineHeight: 1.2 }}>SLMS</p>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Perpustakaan Bireuen</p>
-          </div>
+        {!collapsed ? (
+          <>
+            <div
+              style={{
+                width: '36px', height: '36px', borderRadius: '10px',
+                background: 'linear-gradient(135deg, #3B82F6, #6366F1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Library size={20} color="white" />
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <p style={{ color: 'white', fontSize: '0.85rem', fontWeight: 800, whiteSpace: 'nowrap', lineHeight: 1.2 }}>SLMS</p>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.65rem', whiteSpace: 'nowrap' }}>Perpustakaan Bireuen</p>
+            </div>
+            <button
+              onClick={onToggle}
+              style={{
+                marginLeft: 'auto', width: '28px', height: '28px', borderRadius: '8px',
+                background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'rgba(255,255,255,0.5)', flexShrink: 0, transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+            >
+              <X size={14} />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={onToggle}
+            style={{
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'rgba(255,255,255,0.5)', flexShrink: 0, transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+            title="Expand Sidebar"
+          >
+            <ChevronRight size={18} />
+          </button>
         )}
-        <button
-          onClick={onToggle}
-          style={{
-            marginLeft: 'auto', width: '28px', height: '28px', borderRadius: '8px',
-            background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'rgba(255,255,255,0.5)', flexShrink: 0, transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-        >
-          {collapsed ? <ChevronRight size={14} /> : <X size={14} />}
-        </button>
       </div>
 
       {/* Nav */}
