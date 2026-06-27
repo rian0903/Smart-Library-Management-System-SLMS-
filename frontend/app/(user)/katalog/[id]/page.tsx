@@ -70,7 +70,7 @@ export default function BookDetailPage({ params }: { params: Promise<{ id: strin
       },
       member: {
         name: user?.name || 'Anggota Perpustakaan',
-        member_code: 'BRN-00099',
+        member_code: 'ANG-00099',
       },
       reservation_date: reserveDate,
       status: 'pending',

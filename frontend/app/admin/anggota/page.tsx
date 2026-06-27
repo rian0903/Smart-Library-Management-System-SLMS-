@@ -51,7 +51,7 @@ export default function AdminAnggotaPage() {
       const newMember = {
         id: Date.now(),
         user_id: Date.now(),
-        member_code: `BRN-${Math.floor(10000 + Math.random() * 90000)}`,
+        member_code: `ANG-${Math.floor(10000 + Math.random() * 90000)}`,
         name,
         email,
         phone,

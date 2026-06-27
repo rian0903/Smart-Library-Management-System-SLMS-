@@ -109,7 +109,7 @@ export default function GuestBookPage() {
                     <input
                       id="guest-member-code"
                       type="text"
-                      placeholder="Contoh: BRN-00001"
+                      placeholder="Contoh: ANG-00001"
                       value={memberCode}
                       onChange={(e) => setMemberCode(e.target.value)}
                       className="input-base"

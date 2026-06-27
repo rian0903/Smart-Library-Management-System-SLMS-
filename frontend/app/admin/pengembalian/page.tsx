@@ -142,7 +142,7 @@ export default function AdminPengembalianPage() {
                 <input
                   id="search-code-input"
                   type="text"
-                  placeholder="Contoh: BRN-00001"
+                  placeholder="Contoh: ANG-00001"
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
                   className="input-base"

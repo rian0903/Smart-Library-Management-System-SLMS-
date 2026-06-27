@@ -113,7 +113,7 @@ export function calculateFine(dueDate: string, ratePerDay = 1000): number {
 }
 
 export function generateMemberCode(id: number): string {
-  return `BRN-${String(id).padStart(5, '0')}`;
+  return `ANG-${String(id).padStart(5, '0')}`;
 }
 
 export function slugify(text: string): string {

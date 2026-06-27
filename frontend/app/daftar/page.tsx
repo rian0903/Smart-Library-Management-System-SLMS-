@@ -62,7 +62,7 @@ export default function RegisterPage() {
     const newMember = {
       id: newUserId + 1,
       user_id: newUserId,
-      member_code: `BRN-${Math.floor(10000 + Math.random() * 90000)}`,
+      member_code: `ANG-${Math.floor(10000 + Math.random() * 90000)}`,
       name,
       email,
       phone,

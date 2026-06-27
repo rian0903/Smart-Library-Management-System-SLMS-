@@ -42,7 +42,7 @@ export default function ProfilPage() {
       foundMember = mockMembers.find(m => m.email === user.email) || {
         id: user.id,
         user_id: user.id,
-        member_code: 'BRN-00001',
+        member_code: 'ANG-00001',
         name: user.name,
         email: user.email,
         phone: '081234567890',

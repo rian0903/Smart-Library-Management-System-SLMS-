@@ -40,7 +40,7 @@ const covers = [
 
 export const mockBooks: Book[] = [
   {
-    id: 1, code: 'BRN-001', title: 'Pemrograman Web Modern dengan React', isbn: '978-602-0921-01-1',
+    id: 1, code: 'BKN-001', title: 'Pemrograman Web Modern dengan React', isbn: '978-602-0921-01-1',
     author: { id: 1, name: 'Ahmad Fauzi' }, publisher: { id: 1, name: 'Penerbit Informatika', city: 'Bandung' },
     category: mockCategories[0], shelf: { id: 1, code: 'A-01', location: 'Rak A', floor: 'Lantai 1' },
     year: 2023, stock: 5, available_stock: 3, cover: covers[0],
@@ -48,7 +48,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.8, borrow_count: 87, created_at: '2023-01-15',
   },
   {
-    id: 2, code: 'BRN-002', title: 'Sejarah Aceh: Dari Kesultanan ke Otonomi Khusus', isbn: '978-602-0921-02-2',
+    id: 2, code: 'BKN-002', title: 'Sejarah Aceh: Dari Kesultanan ke Otonomi Khusus', isbn: '978-602-0921-02-2',
     author: { id: 2, name: 'Prof. Dr. Rusdi Sufi' }, publisher: { id: 2, name: 'Balai Pustaka', city: 'Jakarta' },
     category: mockCategories[2], shelf: { id: 2, code: 'C-03', location: 'Rak C', floor: 'Lantai 1' },
     year: 2020, stock: 3, available_stock: 1, cover: covers[1],
@@ -56,7 +56,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.6, borrow_count: 143, created_at: '2020-06-10',
   },
   {
-    id: 3, code: 'BRN-003', title: 'Laskar Pelangi', isbn: '978-979-1037-38-1',
+    id: 3, code: 'BKN-003', title: 'Laskar Pelangi', isbn: '978-979-1037-38-1',
     author: { id: 3, name: 'Andrea Hirata' }, publisher: { id: 3, name: 'Bentang Pustaka', city: 'Yogyakarta' },
     category: mockCategories[3], shelf: { id: 3, code: 'D-05', location: 'Rak D', floor: 'Lantai 2' },
     year: 2005, stock: 8, available_stock: 6, cover: covers[2],
@@ -64,7 +64,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.9, borrow_count: 312, created_at: '2019-03-01',
   },
   {
-    id: 4, code: 'BRN-004', title: 'Fikih Islam Lengkap', isbn: '978-602-0921-04-4',
+    id: 4, code: 'BKN-004', title: 'Fikih Islam Lengkap', isbn: '978-602-0921-04-4',
     author: { id: 4, name: 'Sulaiman Rasjid' }, publisher: { id: 4, name: 'Sinar Baru Algesindo', city: 'Bandung' },
     category: mockCategories[4], shelf: { id: 4, code: 'E-02', location: 'Rak E', floor: 'Lantai 1' },
     year: 2022, stock: 10, available_stock: 7, cover: covers[3],
@@ -72,7 +72,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.7, borrow_count: 198, created_at: '2022-01-20',
   },
   {
-    id: 5, code: 'BRN-005', title: 'Biologi Molekuler untuk Pemula', isbn: '978-602-0921-05-5',
+    id: 5, code: 'BKN-005', title: 'Biologi Molekuler untuk Pemula', isbn: '978-602-0921-05-5',
     author: { id: 5, name: 'Dr. Nurdiana Sari' }, publisher: { id: 5, name: 'Erlangga', city: 'Jakarta' },
     category: mockCategories[5], shelf: { id: 5, code: 'F-01', location: 'Rak F', floor: 'Lantai 2' },
     year: 2021, stock: 4, available_stock: 0, cover: covers[4],
@@ -80,7 +80,7 @@ export const mockBooks: Book[] = [
     status: 'out_of_stock', rating: 4.5, borrow_count: 76, created_at: '2021-08-15',
   },
   {
-    id: 6, code: 'BRN-006', title: 'Hukum Perdata Indonesia', isbn: '978-602-0921-06-6',
+    id: 6, code: 'BKN-006', title: 'Hukum Perdata Indonesia', isbn: '978-602-0921-06-6',
     author: { id: 6, name: 'Prof. R. Subekti' }, publisher: { id: 6, name: 'Pradnya Paramita', city: 'Jakarta' },
     category: mockCategories[6], shelf: { id: 6, code: 'G-02', location: 'Rak G', floor: 'Lantai 2' },
     year: 2019, stock: 6, available_stock: 4, cover: covers[5],
@@ -88,7 +88,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.4, borrow_count: 89, created_at: '2019-11-01',
   },
   {
-    id: 7, code: 'BRN-007', title: 'Ekonomi Pembangunan Daerah', isbn: '978-602-0921-07-7',
+    id: 7, code: 'BKN-007', title: 'Ekonomi Pembangunan Daerah', isbn: '978-602-0921-07-7',
     author: { id: 7, name: 'Dr. Lincolin Arsyad' }, publisher: { id: 7, name: 'BPFE', city: 'Yogyakarta' },
     category: mockCategories[7], shelf: { id: 7, code: 'H-03', location: 'Rak H', floor: 'Lantai 2' },
     year: 2022, stock: 5, available_stock: 2, cover: covers[6],
@@ -96,7 +96,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.3, borrow_count: 64, created_at: '2022-05-10',
   },
   {
-    id: 8, code: 'BRN-008', title: 'Dasar-Dasar Ilmu Kesehatan Masyarakat', isbn: '978-602-0921-08-8',
+    id: 8, code: 'BKN-008', title: 'Dasar-Dasar Ilmu Kesehatan Masyarakat', isbn: '978-602-0921-08-8',
     author: { id: 8, name: 'Dr. Achmad Leki' }, publisher: { id: 5, name: 'Erlangga', city: 'Jakarta' },
     category: mockCategories[8], shelf: { id: 8, code: 'I-01', location: 'Rak I', floor: 'Lantai 3' },
     year: 2023, stock: 7, available_stock: 5, cover: covers[7],
@@ -104,7 +104,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.6, borrow_count: 71, created_at: '2023-02-20',
   },
   {
-    id: 9, code: 'BRN-009', title: 'Kurikulum Merdeka Belajar', isbn: '978-602-0921-09-9',
+    id: 9, code: 'BKN-009', title: 'Kurikulum Merdeka Belajar', isbn: '978-602-0921-09-9',
     author: { id: 9, name: 'Kemendikbudristek' }, publisher: { id: 7, name: 'Kemendikbud Press', city: 'Jakarta' },
     category: mockCategories[1], shelf: { id: 2, code: 'B-04', location: 'Rak B', floor: 'Lantai 1' },
     year: 2022, stock: 12, available_stock: 9, cover: covers[0],
@@ -112,7 +112,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.2, borrow_count: 156, created_at: '2022-07-01',
   },
   {
-    id: 10, code: 'BRN-010', title: 'Si Kancil dan Kawan-Kawan', isbn: '978-602-0921-10-0',
+    id: 10, code: 'BKN-010', title: 'Si Kancil dan Kawan-Kawan', isbn: '978-602-0921-10-0',
     author: { id: 10, name: 'Tim Redaksi' }, publisher: { id: 8, name: 'Gramedia', city: 'Jakarta' },
     category: mockCategories[9], shelf: { id: 9, code: 'J-01', location: 'Rak J', floor: 'Lantai 1' },
     year: 2023, stock: 15, available_stock: 12, cover: covers[1],
@@ -120,7 +120,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.8, borrow_count: 234, created_at: '2023-04-05',
   },
   {
-    id: 11, code: 'BRN-011', title: 'Machine Learning dengan Python', isbn: '978-602-0921-11-1',
+    id: 11, code: 'BKN-011', title: 'Machine Learning dengan Python', isbn: '978-602-0921-11-1',
     author: { id: 1, name: 'Ahmad Fauzi' }, publisher: { id: 1, name: 'Penerbit Informatika', city: 'Bandung' },
     category: mockCategories[0], shelf: { id: 1, code: 'A-02', location: 'Rak A', floor: 'Lantai 1' },
     year: 2023, stock: 6, available_stock: 4, cover: covers[2],
@@ -128,7 +128,7 @@ export const mockBooks: Book[] = [
     status: 'available', rating: 4.7, borrow_count: 93, created_at: '2023-03-12',
   },
   {
-    id: 12, code: 'BRN-012', title: 'Bumi Manusia', isbn: '978-979-417-384-0',
+    id: 12, code: 'BKN-012', title: 'Bumi Manusia', isbn: '978-979-417-384-0',
     author: { id: 11, name: 'Pramoedya Ananta Toer' }, publisher: { id: 9, name: 'Lentera Dipantara', city: 'Jakarta' },
     category: mockCategories[3], shelf: { id: 3, code: 'D-06', location: 'Rak D', floor: 'Lantai 2' },
     year: 2018, stock: 6, available_stock: 3, cover: covers[3],
@@ -139,13 +139,13 @@ export const mockBooks: Book[] = [
 
 // ==================== MEMBERS ====================
 export const mockMembers: Member[] = [
-  { id: 1, user_id: 5, member_code: 'BRN-00001', name: 'Rahmat Hidayat', email: 'rahmat@gmail.com', phone: '081234567890', address: 'Jl. Medan Banda Aceh No. 12, Bireuen', joined_at: '2023-01-15', expired_at: '2025-01-15', status: 'active', total_borrows: 24 },
-  { id: 2, user_id: 6, member_code: 'BRN-00002', name: 'Siti Aminah', email: 'siti@gmail.com', phone: '082345678901', address: 'Jl. Ahmad Yani No. 5, Bireuen', joined_at: '2023-02-20', expired_at: '2025-02-20', status: 'active', total_borrows: 18 },
-  { id: 3, user_id: 7, member_code: 'BRN-00003', name: 'Muhammad Rizki', email: 'rizki@gmail.com', phone: '083456789012', address: 'Desa Cot Gapu, Bireuen', joined_at: '2022-11-10', expired_at: '2024-11-10', status: 'expired', total_borrows: 42 },
-  { id: 4, user_id: 8, member_code: 'BRN-00004', name: 'Nurul Izzah', email: 'nurul@gmail.com', phone: '084567890123', address: 'Jl. Makmur No. 8, Bireuen', joined_at: '2023-05-01', expired_at: '2025-05-01', status: 'active', total_borrows: 11 },
-  { id: 5, user_id: 9, member_code: 'BRN-00005', name: 'Khairul Anwar', email: 'khairul@gmail.com', phone: '085678901234', address: 'Jl. Cut Nyak Dien No. 3, Bireuen', joined_at: '2023-06-12', expired_at: '2025-06-12', status: 'active', total_borrows: 7 },
-  { id: 6, user_id: 10, member_code: 'BRN-00006', name: 'Fatimah Zahra', email: 'fatimah@gmail.com', phone: '086789012345', address: 'Jl. Teuku Umar No. 17, Bireuen', joined_at: '2023-07-20', expired_at: '2025-07-20', status: 'active', total_borrows: 33 },
-  { id: 7, user_id: 11, member_code: 'BRN-00007', name: 'Irfan Maulana', email: 'irfan@gmail.com', phone: '087890123456', address: 'Gampong Blang Bladeh, Bireuen', joined_at: '2024-01-05', expired_at: '2026-01-05', status: 'active', total_borrows: 5 },
+  { id: 1, user_id: 5, member_code: 'ANG-00001', name: 'Rahmat Hidayat', email: 'rahmat@gmail.com', phone: '081234567890', address: 'Jl. Medan Banda Aceh No. 12, Bireuen', joined_at: '2023-01-15', expired_at: '2025-01-15', status: 'active', total_borrows: 24 },
+  { id: 2, user_id: 6, member_code: 'ANG-00002', name: 'Siti Aminah', email: 'siti@gmail.com', phone: '082345678901', address: 'Jl. Ahmad Yani No. 5, Bireuen', joined_at: '2023-02-20', expired_at: '2025-02-20', status: 'active', total_borrows: 18 },
+  { id: 3, user_id: 7, member_code: 'ANG-00003', name: 'Muhammad Rizki', email: 'rizki@gmail.com', phone: '083456789012', address: 'Desa Cot Gapu, Bireuen', joined_at: '2022-11-10', expired_at: '2024-11-10', status: 'expired', total_borrows: 42 },
+  { id: 4, user_id: 8, member_code: 'ANG-00004', name: 'Nurul Izzah', email: 'nurul@gmail.com', phone: '084567890123', address: 'Jl. Makmur No. 8, Bireuen', joined_at: '2023-05-01', expired_at: '2025-05-01', status: 'active', total_borrows: 11 },
+  { id: 5, user_id: 9, member_code: 'ANG-00005', name: 'Khairul Anwar', email: 'khairul@gmail.com', phone: '085678901234', address: 'Jl. Cut Nyak Dien No. 3, Bireuen', joined_at: '2023-06-12', expired_at: '2025-06-12', status: 'active', total_borrows: 7 },
+  { id: 6, user_id: 10, member_code: 'ANG-00006', name: 'Fatimah Zahra', email: 'fatimah@gmail.com', phone: '086789012345', address: 'Jl. Teuku Umar No. 17, Bireuen', joined_at: '2023-07-20', expired_at: '2025-07-20', status: 'active', total_borrows: 33 },
+  { id: 7, user_id: 11, member_code: 'ANG-00007', name: 'Irfan Maulana', email: 'irfan@gmail.com', phone: '087890123456', address: 'Gampong Blang Bladeh, Bireuen', joined_at: '2024-01-05', expired_at: '2026-01-05', status: 'active', total_borrows: 5 },
 ];
 
 // ==================== BORROWINGS ====================
