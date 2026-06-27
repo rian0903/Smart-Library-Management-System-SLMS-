@@ -75,7 +75,7 @@ export default function KatalogPage() {
             </div>
 
             {/* Category */}
-            <div style={{ position: 'relative', minWidth: '160px' }}>
+            <div className="w-full sm:w-auto" style={{ position: 'relative', minWidth: '160px' }}>
               <select
                 id="filter-category"
                 value={selectedCategory}
@@ -92,7 +92,7 @@ export default function KatalogPage() {
             </div>
 
             {/* Year */}
-            <div style={{ position: 'relative', minWidth: '130px' }}>
+            <div className="w-full sm:w-auto" style={{ position: 'relative', minWidth: '130px' }}>
               <select
                 id="filter-year"
                 value={selectedYear}

@@ -120,7 +120,7 @@ export default function AdminRakPage() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
             Manajemen Rak Buku (Lokasi)
@@ -141,7 +141,7 @@ export default function AdminRakPage() {
       {/* Main Card */}
       <div className="card" style={{ background: 'var(--card)', padding: '24px' }}>
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: '20px', maxWidth: '360px' }}>
+        <div style={{ position: 'relative', marginBottom: '20px', width: '100%' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
@@ -153,8 +153,8 @@ export default function AdminRakPage() {
           />
         </div>
 
-        {/* Table */}
-        <div style={{ overflowX: 'auto' }}>
+        {/* Table - Desktop */}
+        <div className="hidden md:block" style={{ overflowX: 'auto' }}>
           <table className="table-base">
             <thead>
               <tr>
@@ -227,6 +227,37 @@ export default function AdminRakPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Card View - Mobile */}
+        <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filteredShelves.length > 0 ? (
+            filteredShelves.map((shelf) => (
+              <div key={shelf.id} style={{ padding: '14px', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                  <div>
+                    <code style={{ fontSize: '0.85rem', fontWeight: 700, padding: '3px 8px', background: 'var(--card)', borderRadius: '6px', color: 'var(--primary)' }}>{shelf.code}</code>
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '6px' }}>{shelf.location}</p>
+                  </div>
+                  <span className="badge badge-success">{shelf.book_count || 0} Buku</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '10px' }}>
+                  <Layers size={14} />
+                  <span>{shelf.floor}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <button onClick={() => handleOpenEdit(shelf)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Edit2 size={13} /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(shelf.id)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Trash2 size={13} /> Hapus
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>Tidak ada rak ditemukan</div>
+          )}
         </div>
       </div>
 

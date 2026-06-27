@@ -98,7 +98,7 @@ export default function AdminPetugasPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Title */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Manajemen Petugas</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Kelola akun petugas perpustakaan, tingkat hak akses, dan status keaktifan staf.</p>
@@ -110,7 +110,7 @@ export default function AdminPetugasPage() {
 
       {/* Filter / Search */}
       <div className="card" style={{ padding: '16px' }}>
-        <div style={{ position: 'relative', maxWidth: '380px' }}>
+        <div style={{ position: 'relative', width: '100%' }}>
           <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             id="staff-search"
@@ -124,8 +124,8 @@ export default function AdminPetugasPage() {
         </div>
       </div>
 
-      {/* Staff Table */}
-      <div className="card" style={{ overflowX: 'auto', padding: 0 }}>
+      {/* Staff Table - Desktop */}
+      <div className="card hidden md:block" style={{ overflowX: 'auto', padding: 0 }}>
         <table className="table-base" style={{ width: '100%', minWidth: '600px' }}>
           <thead>
             <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
@@ -196,6 +196,49 @@ export default function AdminPetugasPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card View - Mobile */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filtered.length === 0 ? (
+          <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data petugas.</div>
+        ) : (
+          filtered.map((s) => (
+            <div key={s.id} className="card" style={{ padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #E0E7FF, #EEF2F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#4F46E5', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0 }}>
+                  {s.name.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{s.name}</p>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{s.email}</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', background: s.role === 'super_admin' ? '#FDE8E8' : s.role === 'admin' ? '#FEF3C7' : '#E0E7FF', color: s.role === 'super_admin' ? '#E11D48' : s.role === 'admin' ? '#D97706' : '#4F46E5' }}>
+                  {getRoleLabel(s.role)}
+                </span>
+                <button
+                  onClick={() => toggleActive(s.id)}
+                  disabled={s.role === 'super_admin'}
+                  style={{ padding: '3px 8px', borderRadius: '8px', border: 'none', cursor: s.role === 'super_admin' ? 'not-allowed' : 'pointer', fontSize: '0.7rem', fontWeight: 700, background: s.is_active ? '#DCFCE7' : '#FEE2E2', color: s.is_active ? '#15803D' : '#B91C1C', opacity: s.role === 'super_admin' ? 0.6 : 1 }}
+                >
+                  {s.is_active ? 'Aktif' : 'Nonaktif'}
+                </button>
+              </div>
+              {s.role !== 'super_admin' && (
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <button onClick={() => handleEdit(s)} style={{ padding: '6px 12px', border: '1.5px solid var(--border)', background: 'white', color: 'var(--text-secondary)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Edit2 size={13} /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(s.id)} style={{ padding: '6px 12px', border: '1.5px solid #FCA5A5', background: '#FEF2F2', color: '#EF4444', borderRadius: '8px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Trash2 size={13} /> Hapus
+                  </button>
+                </div>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Add / Edit Modal */}

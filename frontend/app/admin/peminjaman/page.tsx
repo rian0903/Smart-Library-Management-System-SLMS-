@@ -165,7 +165,7 @@ export default function AdminPeminjamanPage() {
 
       {/* Search Filter */}
       <div className="card" style={{ padding: '16px' }}>
-        <div style={{ position: 'relative', maxWidth: '380px' }}>
+        <div style={{ position: 'relative', width: '100%' }}>
           <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             id="transaction-search"
@@ -179,8 +179,8 @@ export default function AdminPeminjamanPage() {
         </div>
       </div>
 
-      {/* Table Content */}
-      <div className="card" style={{ overflowX: 'auto', padding: 0 }}>
+      {/* Table Content - Desktop */}
+      <div className="card hidden md:block" style={{ overflowX: 'auto', padding: 0 }}>
         {activeTab === 'loans' ? (
           <table className="table-base" style={{ width: '100%', minWidth: '750px' }}>
             <thead>
@@ -311,6 +311,72 @@ export default function AdminPeminjamanPage() {
               )}
             </tbody>
           </table>
+        )}
+      </div>
+
+      {/* Card View - Mobile */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {activeTab === 'loans' ? (
+          filteredLoans.length === 0 ? (
+            <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data peminjaman ditemukan.</div>
+          ) : (
+            filteredLoans.map((b) => (
+              <div key={b.id} className="card" style={{ padding: '16px' }}>
+                <div style={{ marginBottom: '10px' }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{b.member.name}</p>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{b.member.member_code}</p>
+                </div>
+                <div style={{ background: '#F8FAFC', borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>{b.book.title}</p>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{b.book.author.name}</p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                  <span>Pinjam: {b.borrowed_at}</span>
+                  <span>Tempo: {b.due_date}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', background: b.status === 'overdue' ? '#FDE8E8' : '#EFF6FF', color: b.status === 'overdue' ? '#E11D48' : '#2563EB' }}>
+                    {b.status === 'overdue' ? 'Terlambat' : 'Dipinjam'}
+                  </span>
+                  <button onClick={() => handleExtendLoan(b.id)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Perpanjang
+                  </button>
+                </div>
+              </div>
+            ))
+          )
+        ) : (
+          filteredReservations.length === 0 ? (
+            <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data reservasi ditemukan.</div>
+          ) : (
+            filteredReservations.map((r) => (
+              <div key={r.id} className="card" style={{ padding: '16px' }}>
+                <div style={{ marginBottom: '10px' }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{r.member.name}</p>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{r.member.member_code}</p>
+                </div>
+                <div style={{ background: '#F8FAFC', borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>{r.book.title}</p>
+                  <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{r.book.author.name}</p>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                  <span>Pengambilan: {r.reservation_date}</span>
+                  {r.notes && <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>Catatan: {r.notes}</p>}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', background: r.status === 'approved' ? '#DCFCE7' : r.status === 'rejected' ? '#FEE2E2' : '#FEF3C7', color: r.status === 'approved' ? '#15803D' : r.status === 'rejected' ? '#B91C1C' : '#D97706' }}>
+                    {r.status === 'approved' ? 'Disetujui' : r.status === 'rejected' ? 'Ditolak' : 'Menunggu'}
+                  </span>
+                  {r.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => handleApproveReservation(r.id)} style={{ width: '32px', height: '32px', border: 'none', background: '#DCFCE7', color: '#15803D', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Check size={16} /></button>
+                      <button onClick={() => handleRejectReservation(r.id)} style={{ width: '32px', height: '32px', border: 'none', background: '#FEE2E2', color: '#B91C1C', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={16} /></button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))
+          )
         )}
       </div>
 

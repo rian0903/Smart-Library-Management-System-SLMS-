@@ -44,7 +44,7 @@ export default function NewBooks() {
         </div>
 
         {/* List */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
           {newBooks.map((book, i) => (
             <Link
               key={book.id}

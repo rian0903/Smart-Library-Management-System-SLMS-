@@ -142,7 +142,7 @@ export default function HeroSection() {
               onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
               onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
             >
-              Cari <ArrowRight size={16} />
+              <span className="hidden sm:inline">Cari</span> <ArrowRight size={16} />
             </button>
           </div>
         </form>

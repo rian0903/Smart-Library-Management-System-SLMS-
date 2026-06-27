@@ -47,7 +47,7 @@ export default function AdminBukuPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
         <div>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             Manajemen Buku
@@ -56,16 +56,18 @@ export default function AdminBukuPage() {
             Total {mockBooks.length} koleksi buku perpustakaan
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <button
-            style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
+            className="flex-1 sm:flex-none"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', padding: '9px 16px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#22C55E'; e.currentTarget.style.color = '#15803D'; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
           >
-            <Upload size={16} /> Import Excel
+            <Upload size={16} /> Import
           </button>
           <button
-            style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 16px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
+            className="flex-1 sm:flex-none"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px', padding: '9px 16px', borderRadius: '10px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-secondary)', transition: 'all 0.2s' }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#F59E0B'; e.currentTarget.style.color = '#B45309'; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
           >
@@ -73,8 +75,8 @@ export default function AdminBukuPage() {
           </button>
           <Link
             href="/admin/buku/tambah"
-            className="btn btn-primary"
-            style={{ padding: '9px 18px', fontSize: '0.85rem' }}
+            className="btn btn-primary flex-1 sm:flex-none"
+            style={{ padding: '9px 18px', fontSize: '0.85rem', justifyContent: 'center' }}
           >
             <Plus size={16} /> Tambah Buku
           </Link>
@@ -97,16 +99,16 @@ export default function AdminBukuPage() {
             />
           </div>
 
-          <div style={{ position: 'relative' }}>
-            <select value={selectedCat} onChange={(e) => { setSelectedCat(e.target.value); setPage(1); }} className="input-base" style={{ height: '38px', appearance: 'none', paddingRight: '30px', paddingLeft: '12px', fontSize: '0.85rem', minWidth: '150px', cursor: 'pointer' }}>
+          <div className="w-full sm:w-auto" style={{ position: 'relative' }}>
+            <select value={selectedCat} onChange={(e) => { setSelectedCat(e.target.value); setPage(1); }} className="input-base" style={{ height: '38px', appearance: 'none', paddingRight: '30px', paddingLeft: '12px', fontSize: '0.85rem', width: '100%', cursor: 'pointer' }}>
               <option value="">Semua Kategori</option>
               {mockCategories.map(c => <option key={c.id} value={c.slug}>{c.name}</option>)}
             </select>
             <ChevronDown size={14} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }} />
           </div>
 
-          <div style={{ position: 'relative' }}>
-            <select value={selectedStatus} onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }} className="input-base" style={{ height: '38px', appearance: 'none', paddingRight: '30px', paddingLeft: '12px', fontSize: '0.85rem', minWidth: '140px', cursor: 'pointer' }}>
+          <div className="w-full sm:w-auto" style={{ position: 'relative' }}>
+            <select value={selectedStatus} onChange={(e) => { setSelectedStatus(e.target.value); setPage(1); }} className="input-base" style={{ height: '38px', appearance: 'none', paddingRight: '30px', paddingLeft: '12px', fontSize: '0.85rem', width: '100%', cursor: 'pointer' }}>
               {statusOptions.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
             <ChevronDown size={14} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }} />
@@ -132,8 +134,8 @@ export default function AdminBukuPage() {
         </div>
       )}
 
-      {/* Table */}
-      <div className="card" style={{ overflow: 'hidden' }}>
+      {/* Table - Desktop */}
+      <div className="card hidden md:block" style={{ overflow: 'hidden' }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             Menampilkan <strong style={{ color: 'var(--text-primary)' }}>{paginated.length}</strong> dari <strong style={{ color: 'var(--text-primary)' }}>{filtered.length}</strong> buku
@@ -247,6 +249,54 @@ export default function AdminBukuPage() {
                 <button key={p} onClick={() => setPage(p)} style={{ width: '34px', height: '34px', borderRadius: '8px', border: '1.5px solid', borderColor: page === p ? 'var(--primary)' : 'var(--border)', background: page === p ? 'var(--primary)' : 'white', color: page === p ? 'white' : 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}>{p}</button>
               ))}
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} style={{ padding: '6px 14px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', cursor: page === totalPages ? 'not-allowed' : 'pointer', opacity: page === totalPages ? 0.4 : 1, fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Berikutnya →</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Card View - Mobile */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '0 4px' }}>
+          Menampilkan <strong>{paginated.length}</strong> dari <strong>{filtered.length}</strong> buku
+        </p>
+        {paginated.map((book) => {
+          const sc = statusColors[book.status] || { bg: '#F1F5F9', color: '#475569' };
+          return (
+            <div key={book.id} className="card" style={{ padding: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                <div style={{ width: '50px', height: '68px', borderRadius: '8px', overflow: 'hidden', background: '#F1F5F9', flexShrink: 0 }}>
+                  {book.cover ? <img src={book.cover} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <BookOpen size={24} color="#94A3B8" style={{ margin: '22px 13px' }} />}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: '4px' }}>{truncate(book.title, 40)}</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>{book.author.name}</p>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, fontFamily: 'monospace', color: 'var(--primary)', background: '#EFF6FF', padding: '2px 6px', borderRadius: '4px' }}>{book.code}</span>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 600, padding: '2px 6px', borderRadius: '4px', background: sc.bg, color: sc.color }}>{getStatusLabel(book.status)}</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  <span>Stok: <strong style={{ color: book.available_stock > 0 ? '#22C55E' : '#EF4444' }}>{book.available_stock}/{book.stock}</strong></span>
+                  <span>{book.category.name}</span>
+                  <span>{book.shelf?.code || '-'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <Link href={`/admin/buku/${book.id}`} style={{ width: '30px', height: '30px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textDecoration: 'none' }}><Eye size={13} /></Link>
+                  <Link href={`/admin/buku/${book.id}/edit`} style={{ width: '30px', height: '30px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textDecoration: 'none' }}><Edit size={13} /></Link>
+                  <button style={{ width: '30px', height: '30px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}><Trash2 size={13} /></button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px' }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Hal {page}/{totalPages}</p>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: '6px 12px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', cursor: page === 1 ? 'not-allowed' : 'pointer', opacity: page === 1 ? 0.4 : 1, fontSize: '0.8rem' }}>← Prev</button>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} style={{ padding: '6px 12px', borderRadius: '8px', border: '1.5px solid var(--border)', background: 'white', cursor: page === totalPages ? 'not-allowed' : 'pointer', opacity: page === totalPages ? 0.4 : 1, fontSize: '0.8rem' }}>Next →</button>
             </div>
           </div>
         )}

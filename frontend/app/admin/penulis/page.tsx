@@ -108,7 +108,7 @@ export default function AdminPenulisPage() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
             Manajemen Penulis Buku
@@ -129,7 +129,7 @@ export default function AdminPenulisPage() {
       {/* Main Card */}
       <div className="card" style={{ background: 'var(--card)', padding: '24px' }}>
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: '20px', maxWidth: '360px' }}>
+        <div style={{ position: 'relative', marginBottom: '20px', width: '100%' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
@@ -141,8 +141,8 @@ export default function AdminPenulisPage() {
           />
         </div>
 
-        {/* Table */}
-        <div style={{ overflowX: 'auto' }}>
+        {/* Table - Desktop */}
+        <div className="hidden md:block" style={{ overflowX: 'auto' }}>
           <table className="table-base">
             <thead>
               <tr>
@@ -216,6 +216,38 @@ export default function AdminPenulisPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Card View - Mobile */}
+        <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filteredAuthors.length > 0 ? (
+            filteredAuthors.map((auth) => (
+              <div key={auth.id} style={{ padding: '14px', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #3B82F6, #6366F1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '0.9rem', flexShrink: 0 }}>
+                    {auth.name.charAt(0)}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{auth.name}</p>
+                    <span className="badge badge-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                      <BookOpen size={12} /> {auth.book_count} Judul
+                    </span>
+                  </div>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '10px', lineHeight: 1.5 }}>{auth.bio}</p>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <button onClick={() => handleOpenEdit(auth)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Edit2 size={13} /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(auth.id)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Trash2 size={13} /> Hapus
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>Tidak ada penulis ditemukan</div>
+          )}
         </div>
       </div>
 

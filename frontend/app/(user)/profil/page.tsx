@@ -128,10 +128,10 @@ export default function ProfilPage() {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'start' }}>
           
           {/* Left Column - Card Digital & Quick Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '100px' }}>
+          <div className="lg:sticky lg:top-[100px]" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             
             {/* Digital Membership Card (Vue Notus/Premium style) */}
             <div 

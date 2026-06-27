@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Library, LayoutDashboard, BookOpen, Tag, Users, UserCheck,
   ArrowLeftRight, RotateCcw, DollarSign, BarChart2, FileText,
   Download, Shield, Activity, Settings, ChevronDown, ChevronRight,
-  Menu, X, LogOut, Bell, Search, User, Sun, Moon,
+  Menu, X, LogOut, Bell, Search, User, Sun, Moon, ClipboardList,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { getInitials, getRoleLabel } from '@/lib/utils';
@@ -17,6 +17,13 @@ interface NavItem {
   href?: string;
   icon: React.ElementType;
   children?: { label: string; href: string; icon: React.ElementType }[];
+}
+
+interface SidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 const navItems: NavItem[] = [
@@ -35,6 +42,7 @@ const navItems: NavItem[] = [
     children: [
       { label: 'Anggota', href: '/admin/anggota', icon: Users },
       { label: 'Petugas', href: '/admin/petugas', icon: UserCheck },
+      { label: 'Buku Tamu', href: '/admin/buku-tamu', icon: ClipboardList },
     ],
   },
   {
@@ -56,6 +64,7 @@ const navItems: NavItem[] = [
   {
     label: 'Sistem', icon: Shield,
     children: [
+      { label: 'Notifikasi', href: '/admin/notifikasi', icon: Bell },
       { label: 'Role Management', href: '/admin/sistem/role', icon: Shield },
       { label: 'Audit Log', href: '/admin/sistem/audit', icon: Activity },
       { label: 'Pengaturan', href: '/admin/sistem/pengaturan', icon: Settings },
@@ -63,8 +72,21 @@ const navItems: NavItem[] = [
   },
 ];
 
-export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
+export default function AdminSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Close sidebar on route change (mobile)
   const pathname = usePathname();
+  useEffect(() => {
+    if (isMobile && mobileOpen) onMobileClose?.();
+  }, [pathname]);
   const { user } = useAuthStore();
   const [openGroups, setOpenGroups] = useState<string[]>(['Master Data', 'Keanggotaan', 'Transaksi']);
 
@@ -82,36 +104,55 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
     return children?.some((c) => isActive(c.href)) ?? false;
   }
 
+  // On mobile: use mobileOpen state; on desktop: use collapsed state
+  const showMobile = isMobile && mobileOpen;
+  const hideMobile = isMobile && !mobileOpen;
+  const isCollapsed = !isMobile && collapsed;
+
   return (
-    <aside
-      style={{
-        width: collapsed ? '72px' : '260px',
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #0F172A 0%, #1E293B 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        overflow: 'hidden',
-        flexShrink: 0,
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-      }}
-    >
+    <>
+      {/* Mobile backdrop */}
+      {showMobile && (
+        <div
+          onClick={onMobileClose}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 40,
+            background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+          }}
+        />
+      )}
+      <aside
+        style={{
+          width: isMobile ? '260px' : (isCollapsed ? '72px' : '260px'),
+          minHeight: '100vh',
+          background: 'linear-gradient(180deg, #0F172A 0%, #1E293B 100%)',
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden',
+          flexShrink: 0,
+          position: isMobile ? 'fixed' : 'sticky',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          zIndex: isMobile ? 50 : 'auto',
+          transform: hideMobile ? 'translateX(-100%)' : 'translateX(0)',
+        }}
+      >
       {/* Logo */}
       <div
         style={{
-          padding: collapsed ? '20px 0' : '20px 20px',
+          padding: isCollapsed ? '20px 0' : '20px 20px',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'flex-start',
+          justifyContent: isCollapsed ? 'center' : 'flex-start',
           gap: '12px',
           overflow: 'hidden',
           minHeight: '72px',
         }}
       >
-        {!collapsed ? (
+        {!isCollapsed ? (
           <>
             <div
               style={{
@@ -168,10 +209,10 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
               <Link
                 key={item.label}
                 href={item.href}
-                title={collapsed ? item.label : undefined}
+                title={isCollapsed ? item.label : undefined}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '12px',
-                  padding: collapsed ? '12px 18px' : '10px 20px',
+                  padding: isCollapsed ? '12px 18px' : '10px 20px',
                   margin: '1px 8px', borderRadius: '10px',
                   textDecoration: 'none',
                   background: active ? 'linear-gradient(135deg, rgba(59,130,246,0.25), rgba(99,102,241,0.2))' : 'transparent',
@@ -186,12 +227,12 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
                   color={active ? '#60A5FA' : 'rgba(255,255,255,0.45)'}
                   style={{ flexShrink: 0 }}
                 />
-                {!collapsed && (
+                {!isCollapsed && (
                   <span style={{ fontSize: '0.875rem', fontWeight: active ? 700 : 500, color: active ? '#E2E8F0' : 'rgba(255,255,255,0.55)', whiteSpace: 'nowrap' }}>
                     {item.label}
                   </span>
                 )}
-                {active && !collapsed && (
+                {active && !isCollapsed && (
                   <div style={{ marginLeft: 'auto', width: '6px', height: '6px', borderRadius: '50%', background: '#3B82F6' }} />
                 )}
               </Link>
@@ -205,25 +246,25 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
           return (
             <div key={item.label}>
               <button
-                onClick={() => !collapsed && toggleGroup(item.label)}
-                title={collapsed ? item.label : undefined}
+                onClick={() => !isCollapsed && toggleGroup(item.label)}
+                title={isCollapsed ? item.label : undefined}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '12px',
-                  padding: collapsed ? '12px 18px' : '10px 20px',
+                  padding: isCollapsed ? '12px 18px' : '10px 20px',
                   margin: '1px 8px', borderRadius: '10px',
                   width: 'calc(100% - 16px)', border: 'none', cursor: 'pointer',
-                  background: groupActive && collapsed ? 'rgba(59,130,246,0.15)' : 'transparent',
+                  background: groupActive && isCollapsed ? 'rgba(59,130,246,0.15)' : 'transparent',
                   transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = groupActive && collapsed ? 'rgba(59,130,246,0.15)' : 'transparent'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = groupActive && isCollapsed ? 'rgba(59,130,246,0.15)' : 'transparent'; }}
               >
                 <item.icon
                   size={18}
                   color={groupActive ? '#60A5FA' : 'rgba(255,255,255,0.45)'}
                   style={{ flexShrink: 0 }}
                 />
-                {!collapsed && (
+                {!isCollapsed && (
                   <>
                     <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>
                       {item.label}
@@ -238,7 +279,7 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
               </button>
 
               {/* Children */}
-              {(!collapsed && isOpen) && item.children?.map((child) => {
+              {(!isCollapsed && isOpen) && item.children?.map((child) => {
                 const childActive = isActive(child.href);
                 return (
                   <Link
@@ -267,11 +308,27 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
         })}
       </nav>
 
+      {/* Mobile close button */}
+        {isMobile && (
+          <button
+            onClick={onMobileClose}
+            style={{
+              position: 'absolute', top: '20px', right: '16px',
+              width: '28px', height: '28px', borderRadius: '8px',
+              background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'rgba(255,255,255,0.5)', zIndex: 10,
+            }}
+          >
+            <X size={16} />
+          </button>
+        )}
+
       {/* User info at bottom */}
       {user && (
         <div
           style={{
-            padding: collapsed ? '12px 14px' : '16px 16px',
+            padding: isCollapsed ? '12px 14px' : '16px 16px',
             borderTop: '1px solid rgba(255,255,255,0.06)',
             display: 'flex', alignItems: 'center', gap: '10px',
             overflow: 'hidden',
@@ -287,7 +344,7 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
           >
             {getInitials(user.name)}
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div style={{ overflow: 'hidden', flex: 1 }}>
               <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {user.name}
@@ -300,5 +357,6 @@ export default function AdminSidebar({ collapsed, onToggle }: { collapsed: boole
         </div>
       )}
     </aside>
+    </>
   );
 }

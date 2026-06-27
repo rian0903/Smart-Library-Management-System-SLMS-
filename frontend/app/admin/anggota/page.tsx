@@ -113,7 +113,7 @@ export default function AdminAnggotaPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Title block */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Manajemen Anggota</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Kelola data anggota perpustakaan, masa aktif, dan aktivasi kartu digital.</p>
@@ -125,7 +125,7 @@ export default function AdminAnggotaPage() {
 
       {/* Filter / Search bar */}
       <div className="card" style={{ padding: '16px' }}>
-        <div style={{ position: 'relative', maxWidth: '380px' }}>
+        <div style={{ position: 'relative', width: '100%' }}>
           <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             id="member-search"
@@ -139,8 +139,8 @@ export default function AdminAnggotaPage() {
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="card" style={{ overflowX: 'auto', padding: 0 }}>
+      {/* Data Table - Desktop */}
+      <div className="card hidden md:block" style={{ overflowX: 'auto', padding: 0 }}>
         <table className="table-base" style={{ width: '100%', minWidth: '700px' }}>
           <thead>
             <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
@@ -209,6 +209,46 @@ export default function AdminAnggotaPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card View - Mobile */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filtered.length === 0 ? (
+          <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data anggota ditemukan.</div>
+        ) : (
+          filtered.map((m) => (
+            <div key={m.id} className="card" style={{ padding: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #DBEAFE, #EFF6FF)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0 }}>
+                  {m.name.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{m.name}</p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>{m.member_code}</p>
+                </div>
+                <button
+                  onClick={() => toggleStatus(m.id)}
+                  style={{ padding: '4px 10px', borderRadius: '8px', border: 'none', fontSize: '0.7rem', fontWeight: 700, background: m.status === 'active' ? '#DCFCE7' : '#FEE2E2', color: m.status === 'active' ? '#15803D' : '#B91C1C' }}
+                >
+                  {m.status === 'active' ? 'Aktif' : 'Nonaktif'}
+                </button>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Mail size={12} /> {m.email}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Phone size={12} /> {m.phone}</div>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Bergabung: {m.joined_at} | Kadaluarsa: {m.expired_at}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                <button onClick={() => handleEdit(m)} style={{ padding: '6px 12px', border: '1.5px solid var(--border)', background: 'white', color: 'var(--text-secondary)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Edit2 size={13} /> Edit
+                </button>
+                <button onClick={() => handleDelete(m.id)} style={{ padding: '6px 12px', border: '1.5px solid #FCA5A5', background: '#FEF2F2', color: '#EF4444', borderRadius: '8px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Trash2 size={13} /> Hapus
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Add / Edit Modal */}

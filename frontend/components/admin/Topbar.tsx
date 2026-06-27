@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bell, Moon, Sun, ChevronDown, LogOut, User, Settings } from 'lucide-react';
+import { Bell, Moon, Sun, ChevronDown, LogOut, User, Settings, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
 import { getInitials, getRoleLabel } from '@/lib/utils';
 
-export default function AdminTopbar() {
+export default function AdminTopbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
   const pathname = usePathname();
   const { user, clearAuth } = useAuthStore();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -112,13 +112,26 @@ export default function AdminTopbar() {
     <header
       style={{
         height: '64px', background: 'var(--card)', borderBottom: '1px solid var(--border)',
-        display: 'flex', alignItems: 'center', paddingLeft: '24px', paddingRight: '24px',
-        gap: '16px', position: 'sticky', top: 0, zIndex: 30,
+        display: 'flex', alignItems: 'center', paddingLeft: '16px', paddingRight: '16px',
+        gap: '12px', position: 'sticky', top: 0, zIndex: 30,
         boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
       }}
     >
+      {/* Mobile hamburger */}
+      <button
+        className="lg:hidden"
+        onClick={onMenuToggle}
+        style={{
+          width: '36px', height: '36px', borderRadius: '10px', border: '1.5px solid var(--border)',
+          background: 'var(--card)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--text-secondary)', flexShrink: 0,
+        }}
+      >
+        <Menu size={18} />
+      </button>
+
       {/* Breadcrumb */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden', minWidth: 0 }}>
         {breadcrumbs.map((crumb, i) => (
           <span key={crumb.href} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {i < breadcrumbs.length - 1 ? (
@@ -178,7 +191,7 @@ export default function AdminTopbar() {
               className="animate-scale-in"
               style={{
                 position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                width: '320px', background: 'var(--card)', borderRadius: '14px',
+                width: 'min(320px, calc(100vw - 32px))', background: 'var(--card)', borderRadius: '14px',
                 border: '1px solid var(--border)', boxShadow: 'var(--shadow-xl)',
                 zIndex: 100, overflow: 'hidden',
               }}
@@ -248,7 +261,7 @@ export default function AdminTopbar() {
               <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #6366F1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.7rem', fontWeight: 700 }}>
                 {getInitials(user.name)}
               </div>
-              <div style={{ textAlign: 'left' }}>
+              <div className="hidden sm:block" style={{ textAlign: 'left' }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>{user.name.split(' ')[0]}</p>
                 <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{getRoleLabel(user.role)}</p>
               </div>

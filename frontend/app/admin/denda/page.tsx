@@ -108,7 +108,7 @@ export default function AdminDendaPage() {
 
       {/* Filter / Search Bar */}
       <div className="card" style={{ padding: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+        <div className="w-full sm:w-auto" style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
           <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             id="fines-search"
@@ -145,8 +145,8 @@ export default function AdminDendaPage() {
         </div>
       </div>
 
-      {/* Fines Log Table */}
-      <div className="card" style={{ overflowX: 'auto', padding: 0 }}>
+      {/* Fines Log Table - Desktop */}
+      <div className="card hidden md:block" style={{ overflowX: 'auto', padding: 0 }}>
         <table className="table-base" style={{ width: '100%', minWidth: '750px' }}>
           <thead>
             <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
@@ -206,6 +206,42 @@ export default function AdminDendaPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card View - Mobile */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filtered.length === 0 ? (
+          <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data denda ditemukan.</div>
+        ) : (
+          filtered.map((f) => (
+            <div key={f.id} className="card" style={{ padding: '16px' }}>
+              <div style={{ marginBottom: '10px' }}>
+                <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>{f.member.name}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{f.member.member_code}</p>
+              </div>
+              <div style={{ background: '#F8FAFC', borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
+                <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>{f.book.title}</p>
+                <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Jatuh tempo: {f.due_date}</p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '10px' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Terlambat: <strong style={{ color: '#E11D48' }}>{f.days_overdue} hari</strong></span>
+                <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>Rp {f.amount.toLocaleString('id-ID')}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '3px 8px', borderRadius: '6px', background: f.paid ? '#DCFCE7' : '#FEE2E2', color: f.paid ? '#15803D' : '#B91C1C' }}>
+                  {f.paid ? 'Lunas' : 'Belum Lunas'}
+                </span>
+                {!f.paid ? (
+                  <button onClick={() => handlePayFine(f.id)} className="btn btn-primary" style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600 }}>
+                    Bayar Lunas
+                  </button>
+                ) : (
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Tgl Bayar: {f.returned_at}</span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
     </div>

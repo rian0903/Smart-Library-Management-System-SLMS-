@@ -98,7 +98,7 @@ export default function AdminKategoriPage() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="flex flex-col sm:flex-row" style={{ justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
         <div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.025em', marginBottom: '4px' }}>
             Manajemen Kategori Buku
@@ -119,7 +119,7 @@ export default function AdminKategoriPage() {
       {/* Main Card */}
       <div className="card" style={{ background: 'var(--card)', padding: '24px' }}>
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: '20px', maxWidth: '360px' }}>
+        <div style={{ position: 'relative', marginBottom: '20px', width: '100%' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             type="text"
@@ -131,8 +131,8 @@ export default function AdminKategoriPage() {
           />
         </div>
 
-        {/* Table */}
-        <div style={{ overflowX: 'auto' }}>
+        {/* Table - Desktop */}
+        <div className="hidden md:block" style={{ overflowX: 'auto' }}>
           <table className="table-base">
             <thead>
               <tr>
@@ -209,6 +209,38 @@ export default function AdminKategoriPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Card View - Mobile */}
+        <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {filteredCategories.length > 0 ? (
+            filteredCategories.map((cat) => (
+              <div key={cat.id} style={{ padding: '14px', background: 'var(--bg)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '1.5rem' }}>{cat.icon || '📖'}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</p>
+                    <code style={{ fontSize: '0.72rem', padding: '1px 4px', background: 'var(--card)', borderRadius: '4px', color: 'var(--text-secondary)' }}>{cat.slug}</code>
+                  </div>
+                  <span className="badge badge-gray">{cat.book_count || 0} Buku</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: cat.color || '#3B82F6' }} />
+                  <span style={{ fontSize: '0.8rem', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{cat.color}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', borderTop: '1px solid var(--border)', paddingTop: '10px' }}>
+                  <button onClick={() => handleOpenEdit(cat)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Edit2 size={13} /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(cat.id)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Trash2 size={13} /> Hapus
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>Tidak ada kategori ditemukan</div>
+          )}
         </div>
       </div>
 
