@@ -1,0 +1,15 @@
+vendor
+node_modules
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*.php
+.env
+.phpunit.result.cache
+composer.phar
+.git
+.gitignore
+docker-compose.yml
+README.md
+tests

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   Library, Search, Bell, User, Menu, X, ChevronDown,
   BookOpen, Home, Star, History, Info, LogIn, LogOut,
-  Moon, Sun,
+  Moon, Sun, LayoutDashboard,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { getInitials } from '@/lib/utils';
@@ -111,10 +111,33 @@ export default function UserNavbar() {
                   </Link>
                 );
               })}
+
             </div>
 
             {/* Right Actions */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Dashboard shortcut — hidden on mobile, shown for admin/petugas */}
+              {isAuthenticated && user && (user.role === 'super_admin' || user.role === 'admin' || user.role === 'petugas') && (
+                <Link
+                  href={user.role === 'petugas' ? '/petugas/dashboard' : '/admin/dashboard'}
+                  className="hidden lg:flex"
+                  style={{
+                    alignItems: 'center', gap: '6px',
+                    padding: '7px 14px', borderRadius: '10px', fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #3B82F6, #6366F1)',
+                    textDecoration: 'none', transition: 'opacity 0.2s',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+                >
+                  <LayoutDashboard size={15} />
+                  Dashboard
+                </Link>
+              )}
+
               {/* Search */}
               <button
                 id="btn-search"
@@ -235,6 +258,23 @@ export default function UserNavbar() {
                             {item.label}
                           </Link>
                         ))}
+                        {(user.role === 'super_admin' || user.role === 'admin' || user.role === 'petugas') && (
+                          <Link
+                            href={user.role === 'petugas' ? '/petugas/dashboard' : '/admin/dashboard'}
+                            onClick={() => setProfileOpen(false)}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '10px',
+                              padding: '8px 12px', borderRadius: '8px', fontSize: '0.875rem',
+                              color: '#6366F1', textDecoration: 'none',
+                              transition: 'all 0.15s', fontWeight: 600,
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.08)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            <LayoutDashboard size={16} />
+                            Ke Dashboard
+                          </Link>
+                        )}
                         <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '8px' }}>
                           <button
                             id="btn-logout"
@@ -335,6 +375,22 @@ export default function UserNavbar() {
                 </Link>
               );
             })}
+            {isAuthenticated && user && (user.role === 'super_admin' || user.role === 'admin' || user.role === 'petugas') && (
+              <Link
+                href={user.role === 'petugas' ? '/petugas/dashboard' : '/admin/dashboard'}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '12px', borderRadius: '10px', fontSize: '0.9rem',
+                  fontWeight: 600, color: '#6366F1',
+                  background: 'rgba(99,102,241,0.08)',
+                  textDecoration: 'none', marginBottom: '4px',
+                }}
+              >
+                <LayoutDashboard size={18} />
+                Dashboard
+              </Link>
+            )}
             {!isAuthenticated && (
               <Link href="/login" className="btn btn-primary" style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}>
                 <LogIn size={16} /> Masuk
