@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Bell, Moon, Sun, ChevronDown, LogOut, User, Settings, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
@@ -9,6 +9,7 @@ import { getInitials, getRoleLabel } from '@/lib/utils';
 
 export default function AdminTopbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, clearAuth } = useAuthStore();
   const [profileOpen, setProfileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -282,7 +283,7 @@ export default function AdminTopbar({ onMenuToggle }: { onMenuToggle?: () => voi
                   </Link>
                 ))}
                 <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '8px' }}>
-                  <button onClick={() => { clearAuth(); setProfileOpen(false); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderRadius: '8px', fontSize: '0.875rem', color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}
+                  <button onClick={() => { clearAuth(); setProfileOpen(false); router.push('/beranda'); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderRadius: '8px', fontSize: '0.875rem', color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = '#FEE2E2'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                   >

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Library, Search, Bell, User, Menu, X, ChevronDown,
   BookOpen, Home, Star, History, Info, LogIn, LogOut,
@@ -21,6 +21,7 @@ const navLinks = [
 
 export default function UserNavbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, isAuthenticated, clearAuth } = useAuthStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -278,7 +279,7 @@ export default function UserNavbar() {
                         <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '8px' }}>
                           <button
                             id="btn-logout"
-                            onClick={() => { clearAuth(); setProfileOpen(false); }}
+                            onClick={() => { clearAuth(); setProfileOpen(false); router.push('/beranda'); }}
                             style={{
                               width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
                               padding: '8px 12px', borderRadius: '8px', fontSize: '0.875rem',

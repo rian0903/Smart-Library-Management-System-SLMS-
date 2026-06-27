@@ -9,7 +9,7 @@ import { mockUsers } from '@/data/mockData';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setAuth, isAuthenticated, user } = useAuthStore();
+  const { setAuth, isAuthenticated, user, _hasHydrated } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -17,10 +17,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!_hasHydrated) return;
     if (isAuthenticated && user) {
       redirectByRole(user.role);
     }
-  }, [isAuthenticated, user]);
+  }, [_hasHydrated, isAuthenticated, user]);
 
   function redirectByRole(role: string) {
     if (role === 'super_admin' || role === 'admin') router.push('/admin/dashboard');
