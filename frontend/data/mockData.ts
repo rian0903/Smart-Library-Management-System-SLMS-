@@ -139,13 +139,13 @@ export const mockBooks: Book[] = [
 
 // ==================== MEMBERS ====================
 export const mockMembers: Member[] = [
-  { id: 1, user_id: 5, member_code: 'ANG-00001', name: 'Rahmat Hidayat', email: 'rahmat@gmail.com', phone: '081234567890', address: 'Jl. Medan Banda Aceh No. 12, Bireuen', joined_at: '2023-01-15', expired_at: '2025-01-15', status: 'active', total_borrows: 24 },
-  { id: 2, user_id: 6, member_code: 'ANG-00002', name: 'Siti Aminah', email: 'siti@gmail.com', phone: '082345678901', address: 'Jl. Ahmad Yani No. 5, Bireuen', joined_at: '2023-02-20', expired_at: '2025-02-20', status: 'active', total_borrows: 18 },
-  { id: 3, user_id: 7, member_code: 'ANG-00003', name: 'Muhammad Rizki', email: 'rizki@gmail.com', phone: '083456789012', address: 'Desa Cot Gapu, Bireuen', joined_at: '2022-11-10', expired_at: '2024-11-10', status: 'expired', total_borrows: 42 },
-  { id: 4, user_id: 8, member_code: 'ANG-00004', name: 'Nurul Izzah', email: 'nurul@gmail.com', phone: '084567890123', address: 'Jl. Makmur No. 8, Bireuen', joined_at: '2023-05-01', expired_at: '2025-05-01', status: 'active', total_borrows: 11 },
-  { id: 5, user_id: 9, member_code: 'ANG-00005', name: 'Khairul Anwar', email: 'khairul@gmail.com', phone: '085678901234', address: 'Jl. Cut Nyak Dien No. 3, Bireuen', joined_at: '2023-06-12', expired_at: '2025-06-12', status: 'active', total_borrows: 7 },
-  { id: 6, user_id: 10, member_code: 'ANG-00006', name: 'Fatimah Zahra', email: 'fatimah@gmail.com', phone: '086789012345', address: 'Jl. Teuku Umar No. 17, Bireuen', joined_at: '2023-07-20', expired_at: '2025-07-20', status: 'active', total_borrows: 33 },
-  { id: 7, user_id: 11, member_code: 'ANG-00007', name: 'Irfan Maulana', email: 'irfan@gmail.com', phone: '087890123456', address: 'Gampong Blang Bladeh, Bireuen', joined_at: '2024-01-05', expired_at: '2026-01-05', status: 'active', total_borrows: 5 },
+  { id: 1, user_id: 5, member_code: 'ANG-00001', name: 'Rahmat Hidayat', email: 'rahmat@gmail.com', phone: '081234567890', address: 'Jl. Medan Banda Aceh No. 12, Bireuen', joined_at: '2023-01-15', expired_at: '2025-01-15', status: 'active', total_borrows: 24, qr_code: 'ANG-00001|Rahmat Hidayat|2025-01-15' },
+  { id: 2, user_id: 6, member_code: 'ANG-00002', name: 'Siti Aminah', email: 'siti@gmail.com', phone: '082345678901', address: 'Jl. Ahmad Yani No. 5, Bireuen', joined_at: '2023-02-20', expired_at: '2025-02-20', status: 'active', total_borrows: 18, qr_code: 'ANG-00002|Siti Aminah|2025-02-20' },
+  { id: 3, user_id: 7, member_code: 'ANG-00003', name: 'Muhammad Rizki', email: 'rizki@gmail.com', phone: '083456789012', address: 'Desa Cot Gapu, Bireuen', joined_at: '2022-11-10', expired_at: '2024-11-10', status: 'expired', total_borrows: 42, qr_code: 'ANG-00003|Muhammad Rizki|2024-11-10' },
+  { id: 4, user_id: 8, member_code: 'ANG-00004', name: 'Nurul Izzah', email: 'nurul@gmail.com', phone: '084567890123', address: 'Jl. Makmur No. 8, Bireuen', joined_at: '2023-05-01', expired_at: '2025-05-01', status: 'active', total_borrows: 11, qr_code: 'ANG-00004|Nurul Izzah|2025-05-01' },
+  { id: 5, user_id: 9, member_code: 'ANG-00005', name: 'Khairul Anwar', email: 'khairul@gmail.com', phone: '085678901234', address: 'Jl. Cut Nyak Dien No. 3, Bireuen', joined_at: '2023-06-12', expired_at: '2025-06-12', status: 'active', total_borrows: 7, qr_code: 'ANG-00005|Khairul Anwar|2025-06-12' },
+  { id: 6, user_id: 10, member_code: 'ANG-00006', name: 'Fatimah Zahra', email: 'fatimah@gmail.com', phone: '086789012345', address: 'Jl. Teuku Umar No. 17, Bireuen', joined_at: '2023-07-20', expired_at: '2025-07-20', status: 'active', total_borrows: 33, qr_code: 'ANG-00006|Fatimah Zahra|2025-07-20' },
+  { id: 7, user_id: 11, member_code: 'ANG-00007', name: 'Irfan Maulana', email: 'irfan@gmail.com', phone: '087890123456', address: 'Gampong Blang Bladeh, Bireuen', joined_at: '2024-01-05', expired_at: '2026-01-05', status: 'active', total_borrows: 5, qr_code: 'ANG-00007|Irfan Maulana|2026-01-05' },
 ];
 
 // ==================== BORROWINGS ====================
@@ -166,11 +166,12 @@ export const mockReservations: Reservation[] = [
 
 // ==================== GUEST BOOK ====================
 export const mockGuestBooks: GuestBook[] = [
-  { id: 1, visitor_name: 'Ahmad Firdaus', member: mockMembers[0], purpose: 'Membaca buku referensi', visit_date: '2026-06-24', check_in: '08:30', check_out: '11:00', qr_token: 'QR001' },
+  { id: 1, visitor_name: 'Ahmad Firdaus', member: mockMembers[0], purpose: 'Membaca buku referensi', visit_date: '2026-06-24', check_in: '08:30', check_out: '11:00', qr_token: 'ANG-00001|Rahmat Hidayat|2025-01-15' },
   { id: 2, visitor_name: 'Rizka Maulida', purpose: 'Mengerjakan tugas kuliah', visit_date: '2026-06-24', check_in: '09:15', qr_token: 'QR002' },
-  { id: 3, visitor_name: 'Budi Santoso', member: mockMembers[2], purpose: 'Meminjam buku', visit_date: '2026-06-24', check_in: '10:00', check_out: '10:30', qr_token: 'QR003' },
+  { id: 3, visitor_name: 'Budi Santoso', member: mockMembers[2], purpose: 'Meminjam buku', visit_date: '2026-06-24', check_in: '10:00', check_out: '10:30', qr_token: 'ANG-00003|Muhammad Rizki|2024-11-10' },
   { id: 4, visitor_name: 'Sari Dewi', purpose: 'Penelitian', visit_date: '2026-06-23', check_in: '13:00', check_out: '16:30', qr_token: 'QR004' },
   { id: 5, visitor_name: 'Hendra Gunawan', purpose: 'Membaca koran', visit_date: '2026-06-23', check_in: '09:00', check_out: '09:45', qr_token: 'QR005' },
+  { id: 6, visitor_name: 'Fatimah Zahra', member: mockMembers[5], purpose: 'Meminjam buku', visit_date: '2026-06-24', check_in: '08:00', qr_token: 'ANG-00006|Fatimah Zahra|2025-07-20' },
 ];
 
 // ==================== BOOK REQUESTS ====================

@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Phone, MapPin, Calendar, QrCode, Clock, BookOpen, Star, ShieldCheck, History, Edit2, CheckCircle2, ChevronRight, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, QrCode, Clock, BookOpen, Star, ShieldCheck, History, Edit2, CheckCircle2, ChevronRight, AlertCircle, CreditCard } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { mockMembers, mockBorrowings, mockReservations } from '@/data/mockData';
 import { getInitials, getStatusLabel } from '@/lib/utils';
+import MemberCard from '@/components/shared/MemberCard';
 
 export default function ProfilPage() {
   const router = useRouter();
   const { user, isAuthenticated, updateUser } = useAuthStore();
   
-  const [activeTab, setActiveTab] = useState<'profile' | 'borrowings' | 'reservations'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'borrowings' | 'reservations' | 'card'>('profile');
   const [memberInfo, setMemberInfo] = useState<any>(null);
   const [borrowings, setBorrowings] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
@@ -176,7 +177,8 @@ export default function ProfilPage() {
               {[
                 { id: 'profile', label: 'Informasi Profil', icon: User },
                 { id: 'borrowings', label: 'Peminjaman Aktif', icon: BookOpen, count: borrowings.length },
-                { id: 'reservations', label: 'Reservasi Online', icon: Calendar, count: reservations.length }
+                { id: 'reservations', label: 'Reservasi Online', icon: Calendar, count: reservations.length },
+                { id: 'card', label: 'Kartu Anggota', icon: CreditCard }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -335,6 +337,31 @@ export default function ProfilPage() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Tab: Kartu Anggota */}
+            {activeTab === 'card' && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>Kartu Anggota Digital</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Tunjukkan QR code ini kepada petugas saat mengunjungi perpustakaan.</p>
+                </div>
+                <MemberCard
+                  memberCode={memberInfo.member_code}
+                  name={memberInfo.name}
+                  email={memberInfo.email}
+                  expiryDate={memberInfo.expired_at}
+                  status={memberInfo.status === 'active' ? 'active' : memberInfo.status === 'expired' ? 'expired' : 'inactive'}
+                />
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center', maxWidth: '360px', lineHeight: '1.6' }}>
+                  <p>Gunakan kartu ini untuk:</p>
+                  <ul style={{ marginTop: '6px', paddingLeft: '20px', textAlign: 'left' }}>
+                    <li>Check-in masuk perpustakaan</li>
+                    <li>Meminjam buku di meja petugas</li>
+                    <li>Mengembalikan buku</li>
+                  </ul>
+                </div>
               </div>
             )}
 
