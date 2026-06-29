@@ -1,26 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
-import { BarChart2, Calendar, FileText, Download, TrendingUp, Info } from 'lucide-react';
-import { mockDashboardCharts } from '@/data/mockData';
+import { Info } from 'lucide-react';
+import { mockDashboardCharts, mockBooks, mockBorrowings, mockCategories, mockGuestBooks } from '@/data/mockData';
 
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
-const visitorDetails = [
-  { label: 'Senin', value: 65, member: 45, nonMember: 20 },
-  { label: 'Selasa', value: 82, member: 55, nonMember: 27 },
-  { label: 'Rabu', value: 78, member: 50, nonMember: 28 },
-  { label: 'Kamis', value: 91, member: 60, nonMember: 31 },
-  { label: 'Jumat', value: 110, member: 85, nonMember: 25 },
-  { label: 'Sabtu', value: 45, member: 30, nonMember: 15 },
-];
-
 export default function AdminStatistikPage() {
-  const [timeframe, setTimeframe] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [borrowTrend, setBorrowTrend] = useState(mockDashboardCharts.borrowing_trend);
+  const [visitorData, setVisitorData] = useState(mockDashboardCharts.visitor_trend);
+  const [categoryDist, setCategoryDist] = useState(mockDashboardCharts.category_distribution);
+  const [summaryText, setSummaryText] = useState('');
+
+  useEffect(() => {
+    // Aggregate borrowing trend from real loans
+    const savedLoans = localStorage.getItem('slms_loans');
+    const loans = savedLoans ? JSON.parse(savedLoans) : mockBorrowings;
+    const monthMap: Record<string, number> = {};
+    loans.forEach((l: any) => {
+      if (l.borrowed_at) {
+        const d = new Date(l.borrowed_at);
+        const key = d.toLocaleString('id-ID', { month: 'short' });
+        monthMap[key] = (monthMap[key] || 0) + 1;
+      }
+    });
+    if (Object.keys(monthMap).length > 0) {
+      setBorrowTrend(Object.entries(monthMap).map(([label, value]) => ({ label, value })));
+    }
+
+    // Aggregate visitor data from guestbooks
+    const savedGuests = localStorage.getItem('slms_guestbooks');
+    const guests = savedGuests ? JSON.parse(savedGuests) : mockGuestBooks;
+    const dayMap: Record<string, { member: number; nonMember: number }> = {};
+    guests.forEach((g: any) => {
+      if (g.visit_date) {
+        const d = new Date(g.visit_date);
+        const day = d.toLocaleString('id-ID', { weekday: 'short' });
+        if (!dayMap[day]) dayMap[day] = { member: 0, nonMember: 0 };
+        if (g.member) dayMap[day].member++; else dayMap[day].nonMember++;
+      }
+    });
+    if (Object.keys(dayMap).length > 0) {
+      setVisitorData(Object.entries(dayMap).map(([label, v]) => ({ label, value: v.member + v.nonMember, ...v })));
+    }
+
+    // Aggregate category distribution from books
+    const savedBooks = localStorage.getItem('slms_books');
+    const books = savedBooks ? JSON.parse(savedBooks) : mockBooks;
+    const catMap: Record<string, number> = {};
+    books.forEach((b: any) => {
+      const cat = b.category?.name || b.category || 'Lainnya';
+      catMap[cat] = (catMap[cat] || 0) + 1;
+    });
+    const catEntries = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+    setCategoryDist(catEntries.map(([category, count], i) => ({ category, count, color: COLORS[i % COLORS.length] })));
+
+    // Build summary
+    const topCat = catEntries.length > 0 ? catEntries[0][0] : 'N/A';
+    const totalLoans = loans.length;
+    setSummaryText(`Berdasarkan data saat ini, kategori ${topCat} merupakan yang paling aktif. Total ${totalLoans} peminjaman tercatat dan ${guests.length} kunjungan terdaftar di sistem.`);
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -60,7 +103,7 @@ export default function AdminStatistikPage() {
         <div className="card animate-fade-in" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '18px' }}>Komposisi Pengunjung Mingguan</h3>
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={visitorDetails}>
+            <BarChart data={visitorData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#94A3B8' }} />
               <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
@@ -78,8 +121,8 @@ export default function AdminStatistikPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' }}>
             <ResponsiveContainer width="45%" height={200}>
               <PieChart>
-                <Pie data={mockDashboardCharts.category_distribution} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="count">
-                  {mockDashboardCharts.category_distribution.map((entry, i) => (
+                <Pie data={categoryDist} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="count">
+                  {categoryDist.map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
                   ))}
                 </Pie>
@@ -87,7 +130,7 @@ export default function AdminStatistikPage() {
               </PieChart>
             </ResponsiveContainer>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {mockDashboardCharts.category_distribution.map((item, i) => (
+              {categoryDist.map((item, i) => (
                 <div key={item.category} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
                   <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
@@ -105,8 +148,7 @@ export default function AdminStatistikPage() {
           <div>
             <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>Ringkasan Analisis</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-              Berdasarkan data kunjungan dan peminjaman selama 30 hari terakhir, kategori <strong>Novel & Sastra</strong> merupakan yang paling aktif berkontribusi terhadap 38% peminjaman buku. 
-              Hari dengan kunjungan terpadat berada di hari <strong>Jumat</strong>, dipicu oleh program peningkatan literasi mingguan perpustakaan.
+              {summaryText || 'Memuat data statistik...'}
             </p>
           </div>
           <div style={{ display: 'flex', gap: '10px', background: '#F0F9FF', border: '1px solid #B9E6FE', borderRadius: '12px', padding: '16px', marginTop: '16px' }}>

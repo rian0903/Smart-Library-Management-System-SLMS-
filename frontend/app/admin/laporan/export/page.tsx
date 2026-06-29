@@ -1,11 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, FileText, CheckCircle2, RefreshCw, BarChart2 } from 'lucide-react';
+import { Download, CheckCircle2, RefreshCw } from 'lucide-react';
+import { mockBooks, mockMembers, mockBorrowings, mockGuestBooks } from '@/data/mockData';
+import { logAudit } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 export default function AdminExportPage() {
+  const { user } = useAuthStore();
   const [loadingType, setLoadingType] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState('');
+
+  const downloadCSV = (filename: string, headers: string[], rows: string[][]) => {
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const triggerDownload = (reportName: string, format: string) => {
     const key = `${reportName}-${format}`;
@@ -13,23 +30,41 @@ export default function AdminExportPage() {
     setSuccessMsg('');
 
     setTimeout(() => {
-      // Simulate file download by creating a fake CSV trigger or just notification
-      const csvContent = "data:text/csv;charset=utf-8,ID,Nama,Data\n1,Demo Row,Sample Data";
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `laporan_${reportName.toLowerCase()}_demo.${format.toLowerCase()}`);
-      document.body.appendChild(link); // Required for FF
-      
-      // Don't actually trigger download for PDF to avoid confusion, but CSV is great
-      if (format === 'CSV') {
-        link.click();
+      if (reportName === 'Koleksi Buku') {
+        const saved = localStorage.getItem('slms_books');
+        const books = saved ? JSON.parse(saved) : mockBooks;
+        downloadCSV(`laporan_buku_${Date.now()}.${format === 'CSV' ? 'csv' : 'csv'}`,
+          ['ID', 'Kode', 'Judul', 'Penulis', 'ISBN', 'Kategori', 'Tahun', 'Stok', 'Stok Tersedia', 'Status'],
+          books.map((b: any) => [b.id, b.code, b.title, b.author?.name || b.author, b.isbn, b.category?.name || b.category, b.year, b.stock, b.available_stock, b.status])
+        );
+      } else if (reportName === 'Data Keanggotaan') {
+        const saved = localStorage.getItem('slms_members');
+        const members = saved ? JSON.parse(saved) : mockMembers;
+        downloadCSV(`laporan_anggota_${Date.now()}.csv`,
+          ['ID', 'Kode Anggota', 'Nama', 'Email', 'Telepon', 'Alamat', 'Bergabung', 'Berakhir', 'Status', 'Total Pinjam'],
+          members.map((m: any) => [m.id, m.member_code, m.name, m.email, m.phone, m.address, m.joined_at, m.expired_at, m.status, m.total_borrows])
+        );
+      } else if (reportName === 'Transaksi Peminjaman') {
+        const saved = localStorage.getItem('slms_loans');
+        const loans = saved ? JSON.parse(saved) : mockBorrowings;
+        downloadCSV(`laporan_peminjaman_${Date.now()}.csv`,
+          ['ID', 'Anggota', 'Kode Anggota', 'Buku', 'Tgl Pinjam', 'Jatuh Tempo', 'Tgl Kembali', 'Status', 'Denda'],
+          loans.map((l: any) => [l.id, l.member?.name, l.member?.member_code, l.book?.title, l.borrowed_at, l.due_date, l.returned_at || '-', l.status, l.fine_amount || 0])
+        );
+      } else if (reportName === 'Laporan Keuangan Denda') {
+        const saved = localStorage.getItem('slms_fines');
+        const fines = saved ? JSON.parse(saved) : [];
+        downloadCSV(`laporan_denda_${Date.now()}.csv`,
+          ['ID', 'Anggota', 'Buku', 'Jumlah Denda', 'Lunas', 'Jatuh Tempo', 'Tgl Kembali', 'Hari Terlambat'],
+          fines.map((f: any) => [f.id, f.member?.name, f.book?.title, f.amount, f.paid ? 'Ya' : 'Tidak', f.due_date, f.returned_at, f.days_overdue])
+        );
       }
 
+      logAudit({ user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : undefined, action: 'export', model: 'Report', description: `Export laporan ${reportName} (${format})` });
       setLoadingType(null);
       setSuccessMsg(`Laporan ${reportName} dalam format ${format} berhasil diunduh!`);
       setTimeout(() => setSuccessMsg(''), 4000);
-    }, 1500);
+    }, 1000);
   };
 
   const reportsList = [

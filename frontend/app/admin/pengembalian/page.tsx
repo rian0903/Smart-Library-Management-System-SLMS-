@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Search, Calendar, User, BookOpen, Clock, AlertTriangle, ArrowLeftRight, CheckCircle2, DollarSign } from 'lucide-react';
 import { mockBorrowings } from '@/data/mockData';
+import { getSettings, logAudit } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 export default function AdminPengembalianPage() {
+  const { user } = useAuthStore();
   const [borrowings, setBorrowings] = useState<any[]>([]);
   const [searchCode, setSearchCode] = useState('');
   const [selectedLoan, setSelectedLoan] = useState<any | null>(null);
@@ -36,8 +39,10 @@ export default function AdminPengembalianPage() {
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
     if (diffDays > 0) {
+      const settings = getSettings();
+      const finePerDay = settings.finePerDay || 1000;
       setDaysOverdue(diffDays);
-      setCalculatedFine(diffDays * 1000); // Rp 1.000 per day fine
+      setCalculatedFine(diffDays * finePerDay);
     } else {
       setDaysOverdue(0);
       setCalculatedFine(0);
@@ -108,6 +113,7 @@ export default function AdminPengembalianPage() {
     }
 
     setSuccessMsg(`Buku "${selectedLoan.book.title}" oleh ${selectedLoan.member.name} berhasil dikembalikan!`);
+    logAudit({ user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : undefined, action: 'update', model: 'Borrowing', model_id: selectedLoan.id, description: `Pengembalian buku: ${selectedLoan.book.title} oleh ${selectedLoan.member.name}${daysOverdue > 0 ? ` (terlambat ${daysOverdue} hari, denda Rp ${calculatedFine.toLocaleString('id-ID')})` : ''}` });
     setSelectedLoan(null);
     setSearchCode('');
   };
@@ -244,7 +250,7 @@ export default function AdminPengembalianPage() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <p style={{ fontSize: '0.7rem', color: '#7F1D1D' }}>Total Denda (Rp 1.000 / hari)</p>
+                      <p style={{ fontSize: '0.7rem', color: '#7F1D1D' }}>Total Denda (Rp {(getSettings().finePerDay || 1000).toLocaleString('id-ID')} / hari)</p>
                       <p style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B91C1C' }}>Rp {calculatedFine.toLocaleString('id-ID')}</p>
                     </div>
                     {/* Payment state */}

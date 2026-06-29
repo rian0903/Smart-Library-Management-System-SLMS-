@@ -1,15 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Calendar, User, BookOpen, Clock, Check, X, AlertTriangle, ArrowLeftRight, ClipboardList } from 'lucide-react';
-import { mockBorrowings, mockReservations } from '@/data/mockData';
+import { Search, Calendar, User, BookOpen, Clock, Check, X, AlertTriangle, ArrowLeftRight, ClipboardList, Plus } from 'lucide-react';
+import { mockBorrowings, mockReservations, mockBooks, mockMembers } from '@/data/mockData';
+import { getSettings, logAudit } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 export default function AdminPeminjamanPage() {
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'loans' | 'reservations'>('loans');
   const [borrowings, setBorrowings] = useState<any[]>([]);
   const [reservations, setReservations] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [alert, setAlert] = useState<{ type: 'success' | 'danger'; message: string } | null>(null);
+  const [showNewLoan, setShowNewLoan] = useState(false);
+  const [nlMemberCode, setNlMemberCode] = useState('');
+  const [nlBookCode, setNlBookCode] = useState('');
+  const [nlBorrowDate, setNlBorrowDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     // Load borrowings
@@ -113,18 +120,74 @@ export default function AdminPeminjamanPage() {
     setTimeout(() => setAlert(null), 5000);
   };
 
+  const handleCreateLoan = (e: React.FormEvent) => {
+    e.preventDefault();
+    const settings = getSettings();
+    const member = mockMembers.find(m => m.member_code.toLowerCase() === nlMemberCode.toLowerCase());
+    const allBooks = localStorage.getItem('slms_books');
+    const booksList = allBooks ? JSON.parse(allBooks) : mockBooks;
+    const book = booksList.find((b: any) => b.code.toLowerCase() === nlBookCode.toLowerCase());
+    if (!member) { setAlert({ type: 'danger', message: 'Kode anggota tidak ditemukan.' }); setTimeout(() => setAlert(null), 4000); return; }
+    if (!book) { setAlert({ type: 'danger', message: 'Kode buku tidak ditemukan.' }); setTimeout(() => setAlert(null), 4000); return; }
+    if (book.available_stock <= 0) { setAlert({ type: 'danger', message: 'Stok buku habis.' }); setTimeout(() => setAlert(null), 4000); return; }
+    const loanDays = settings.maxLoanDays || 14;
+    const dueDate = new Date(new Date(nlBorrowDate).getTime() + loanDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const newLoan = {
+      id: Date.now(),
+      member: { id: member.id, name: member.name, member_code: member.member_code, email: member.email },
+      book: { id: book.id, title: book.title, author: book.author, cover: book.cover, code: book.code },
+      borrowed_at: nlBorrowDate, due_date: dueDate, status: 'active', fine_amount: 0, fine_paid: false,
+    };
+    const updatedBooks = booksList.map((b: any) => b.id === book.id ? { ...b, available_stock: b.available_stock - 1 } : b);
+    localStorage.setItem('slms_books', JSON.stringify(updatedBooks));
+    const updatedLoans = [newLoan, ...borrowings];
+    saveLoans(updatedLoans);
+    logAudit({ user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : undefined, action: 'create', model: 'Borrowing', model_id: newLoan.id, description: `Input peminjaman: ${book.title} oleh ${member.name}` });
+    setAlert({ type: 'success', message: `Peminjaman berhasil dibuat! Buku "${book.title}" dipinjam oleh ${member.name}, jatuh tempo ${dueDate}.` });
+    setTimeout(() => setAlert(null), 6000);
+    setShowNewLoan(false);
+    setNlMemberCode(''); setNlBookCode('');
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Title */}
-      <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Transaksi Peminjaman</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Setujui pengajuan reservasi online anggota atau kelola peminjaman buku aktif.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Transaksi Peminjaman</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Setujui pengajuan reservasi online anggota atau kelola peminjaman buku aktif.</p>
+        </div>
+        <button onClick={() => setShowNewLoan(!showNewLoan)} className="btn btn-primary" style={{ display: 'flex', gap: '8px', padding: '10px 18px', borderRadius: '10px' }}>
+          <Plus size={18} /> {showNewLoan ? 'Tutup Form' : 'Input Peminjaman Baru'}
+        </button>
       </div>
 
       {alert && (
         <div style={{ padding: '14px 20px', borderRadius: '10px', background: alert.type === 'success' ? '#DEF7EC' : '#FDE8E8', color: alert.type === 'success' ? '#03543F' : '#9B1C1C', border: `1.5px solid ${alert.type === 'success' ? '#BCF0DA' : '#F8B4B4'}`, fontWeight: 500, fontSize: '0.85rem' }}>
           {alert.message}
+        </div>
+      )}
+
+      {/* New Loan Form */}
+      {showNewLoan && (
+        <div className="card animate-fade-in" style={{ padding: '24px' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '16px' }}>Input Peminjaman Baru</h3>
+          <form onSubmit={handleCreateLoan} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div style={{ flex: 1, minWidth: '160px' }}>
+              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Kode Anggota</label>
+              <input type="text" value={nlMemberCode} onChange={(e) => setNlMemberCode(e.target.value)} placeholder="ANG-00001" className="input-base" required />
+            </div>
+            <div style={{ flex: 1, minWidth: '160px' }}>
+              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Kode Buku</label>
+              <input type="text" value={nlBookCode} onChange={(e) => setNlBookCode(e.target.value)} placeholder="BKN-001" className="input-base" required />
+            </div>
+            <div style={{ minWidth: '160px' }}>
+              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Tanggal Pinjam</label>
+              <input type="date" value={nlBorrowDate} onChange={(e) => setNlBorrowDate(e.target.value)} className="input-base" required />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>Buat Peminjaman</button>
+          </form>
         </div>
       )}
 

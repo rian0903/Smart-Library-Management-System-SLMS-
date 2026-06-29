@@ -123,3 +123,44 @@ export function slugify(text: string): string {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-');
 }
+
+// ==================== AUDIT LOGGING ====================
+export function logAudit(data: {
+  user?: { id: number; name: string; email: string; role: string };
+  action: string;
+  model: string;
+  model_id?: number;
+  description: string;
+}) {
+  const saved = localStorage.getItem('slms_audit_logs');
+  const logs = saved ? JSON.parse(saved) : [];
+  const newLog = {
+    id: Date.now(),
+    user: data.user || { id: 0, name: 'System', email: 'system', role: 'system' },
+    action: data.action,
+    model: data.model,
+    model_id: data.model_id,
+    description: data.description,
+    ip_address: '127.0.0.1',
+    created_at: new Date().toISOString(),
+  };
+  logs.unshift(newLog);
+  localStorage.setItem('slms_audit_logs', JSON.stringify(logs.slice(0, 200)));
+}
+
+// ==================== SETTINGS HELPER ====================
+export function getSettings() {
+  const saved = localStorage.getItem('slms_settings');
+  if (saved) {
+    return JSON.parse(saved);
+  }
+  return {
+    libraryName: 'Perpustakaan Kabupaten Bireuen',
+    finePerDay: 1000,
+    maxLoanDays: 14,
+    maxBooks: 3,
+    address: 'Jl. Medan Banda Aceh No. 12, Bireuen, Aceh',
+    phone: '0644-123456',
+    email: 'perpustakaan@bireuen.go.id',
+  };
+}

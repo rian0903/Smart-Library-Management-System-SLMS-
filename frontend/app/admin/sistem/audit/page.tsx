@@ -1,13 +1,29 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Activity, Clock, ShieldAlert } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Clock, Trash2 } from 'lucide-react';
 import { mockActivityLogs } from '@/data/mockData';
 import { formatDateTime } from '@/lib/utils';
 
 export default function AdminAuditPage() {
-  const [logs, setLogs] = useState<any[]>(mockActivityLogs);
+  const [logs, setLogs] = useState<any[]>([]);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('slms_audit_logs');
+    const savedLogs = saved ? JSON.parse(saved) : [];
+    // Merge mock + saved, deduplicate by id
+    const allLogs = [...savedLogs, ...mockActivityLogs.filter(m => !savedLogs.some((s: any) => s.id === m.id))];
+    allLogs.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setLogs(allLogs);
+  }, []);
+
+  const handleClearLogs = () => {
+    if (confirm('Hapus semua audit log?')) {
+      localStorage.removeItem('slms_audit_logs');
+      setLogs(mockActivityLogs);
+    }
+  };
 
   const filtered = logs.filter(l => 
     l.user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -19,9 +35,14 @@ export default function AdminAuditPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       
       {/* Title */}
-      <div>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Audit Log Aktivitas</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Catatan rekapitulasi aktivitas petugas dan administrator di dalam sistem informasi perpustakaan.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Audit Log Aktivitas</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Catatan rekapitulasi aktivitas petugas dan administrator di dalam sistem informasi perpustakaan.</p>
+        </div>
+        <button onClick={handleClearLogs} style={{ display: 'flex', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: '1.5px solid #FCA5A5', background: 'white', color: '#B91C1C', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+          <Trash2 size={14} /> Bersihkan Log
+        </button>
       </div>
 
       {/* Filter / Search */}

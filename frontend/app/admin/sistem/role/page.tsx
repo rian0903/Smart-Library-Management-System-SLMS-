@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Shield, Check, Save, Info, CheckSquare, Square } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Save, CheckSquare, Square } from 'lucide-react';
+import { logAudit } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 interface PermissionGroup {
   category: string;
@@ -37,9 +39,9 @@ const permissionGroups: PermissionGroup[] = [
 ];
 
 export default function AdminRolePage() {
+  const { user } = useAuthStore();
   const [selectedRole, setSelectedRole] = useState<'super_admin' | 'admin' | 'petugas'>('admin');
   
-  // Matrix of role -> permission IDs
   const [rolePermissions, setRolePermissions] = useState<Record<string, string[]>>({
     super_admin: ['book_view', 'book_create', 'book_edit', 'book_delete', 'member_view', 'member_create', 'member_edit', 'loan_approve', 'loan_process', 'loan_fine'],
     admin: ['book_view', 'book_create', 'book_edit', 'member_view', 'member_create', 'member_edit', 'loan_approve', 'loan_process', 'loan_fine'],
@@ -48,21 +50,25 @@ export default function AdminRolePage() {
 
   const [success, setSuccess] = useState(false);
 
-  const togglePermission = (permId: string) => {
-    if (selectedRole === 'super_admin') return; // Super admin has full permissions locked
+  useEffect(() => {
+    const saved = localStorage.getItem('slms_role_permissions');
+    if (saved) {
+      try { setRolePermissions(JSON.parse(saved)); } catch {}
+    }
+  }, []);
 
+  const togglePermission = (permId: string) => {
+    if (selectedRole === 'super_admin') return;
     const currentPerms = rolePermissions[selectedRole];
     const updatedPerms = currentPerms.includes(permId)
       ? currentPerms.filter(id => id !== permId)
       : [...currentPerms, permId];
-
-    setRolePermissions({
-      ...rolePermissions,
-      [selectedRole]: updatedPerms
-    });
+    setRolePermissions({ ...rolePermissions, [selectedRole]: updatedPerms });
   };
 
   const handleSave = () => {
+    localStorage.setItem('slms_role_permissions', JSON.stringify(rolePermissions));
+    logAudit({ user: user ? { id: user.id, name: user.name, email: user.email, role: user.role } : undefined, action: 'update', model: 'RolePermission', description: `Menyimpan hak akses role ${selectedRole}` });
     setSuccess(true);
     setTimeout(() => setSuccess(false), 3000);
   };

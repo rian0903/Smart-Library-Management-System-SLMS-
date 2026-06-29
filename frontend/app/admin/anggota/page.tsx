@@ -48,18 +48,21 @@ export default function AdminAnggotaPage() {
       } : m);
       saveToLocal(updated);
     } else {
+      const memberCode = `ANG-${Math.floor(10000 + Math.random() * 90000)}`;
+      const expiryDate = new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0];
       const newMember = {
         id: Date.now(),
         user_id: Date.now(),
-        member_code: `ANG-${Math.floor(10000 + Math.random() * 90000)}`,
+        member_code: memberCode,
         name,
         email,
         phone,
         address,
         joined_at: new Date().toISOString().split('T')[0],
-        expired_at: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0],
+        expired_at: expiryDate,
         status,
-        total_borrows: 0
+        total_borrows: 0,
+        qr_code: `${memberCode}|${name}|${expiryDate}`,
       };
       saveToLocal([newMember, ...members]);
     }

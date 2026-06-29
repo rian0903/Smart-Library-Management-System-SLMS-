@@ -92,6 +92,7 @@ export interface Book {
   status: 'available' | 'out_of_stock' | 'lost';
   rating?: number;
   borrow_count?: number;
+  qr_code?: string;
   created_at: string;
 }
 

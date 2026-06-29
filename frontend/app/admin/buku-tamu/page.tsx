@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Calendar, Users, Eye, Clock, CheckCircle } from 'lucide-react';
-import { mockGuestBooks } from '@/data/mockData';
+import { Search, Calendar, Users, Eye, Clock, CheckCircle, Plus, User } from 'lucide-react';
+import { mockGuestBooks, mockMembers } from '@/data/mockData';
 
 export default function AdminBukuTamuPage() {
   const [visits, setVisits] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [showForm, setShowForm] = useState(false);
+
+  // Check-in form state
+  const [visitorName, setVisitorName] = useState('');
+  const [isMember, setIsMember] = useState(false);
+  const [memberCode, setMemberCode] = useState('');
+  const [purpose, setPurpose] = useState('Membaca buku');
 
   useEffect(() => {
     const saved = localStorage.getItem('slms_guestbooks');
@@ -31,6 +38,30 @@ export default function AdminBukuTamuPage() {
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
+  const handleCheckIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!visitorName && !memberCode) return;
+    const matchedMember = isMember ? mockMembers.find(m => m.member_code.toLowerCase() === memberCode.toLowerCase()) : undefined;
+    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const date = new Date().toISOString().split('T')[0];
+    const token = `QR-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    const newVisit = {
+      id: Date.now(),
+      visitor_name: isMember && matchedMember ? matchedMember.name : visitorName || 'Unknown',
+      member: matchedMember,
+      purpose,
+      visit_date: date,
+      check_in: time,
+      qr_token: token,
+    };
+    const updated = [newVisit, ...visits];
+    saveVisits(updated);
+    setVisitorName(''); setMemberCode(''); setPurpose('Membaca buku'); setIsMember(false);
+    setShowForm(false);
+    setSuccessMsg(`${newVisit.visitor_name} berhasil check-in!`);
+    setTimeout(() => setSuccessMsg(''), 4000);
+  };
+
   const filtered = visits.filter(v => 
     v.visitor_name.toLowerCase().includes(search.toLowerCase()) ||
     v.purpose.toLowerCase().includes(search.toLowerCase())
@@ -48,11 +79,42 @@ export default function AdminBukuTamuPage() {
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Rekap Buku Tamu</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Pantau daftar kunjungan harian perpustakaan kabupaten secara real-time.</p>
         </div>
+        <button onClick={() => setShowForm(!showForm)} className="btn btn-primary" style={{ display: 'flex', gap: '8px', padding: '10px 18px', borderRadius: '10px' }}>
+          <Plus size={18} /> {showForm ? 'Tutup Form' : 'Check In Manual'}
+        </button>
       </div>
 
       {successMsg && (
         <div style={{ padding: '12px 16px', borderRadius: '10px', background: '#DCFCE7', color: '#15803D', border: '1.5px solid #BCF0DA', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <CheckCircle size={16} /> {successMsg}
+        </div>
+      )}
+
+      {/* Check-in Form */}
+      {showForm && (
+        <div className="card animate-fade-in" style={{ padding: '24px' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '16px' }}>Form Check In Pengunjung</h3>
+          <form onSubmit={handleCheckIn} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#F8FAFC', padding: '8px 12px', borderRadius: '8px' }}>
+              <input type="checkbox" checked={isMember} onChange={(e) => setIsMember(e.target.checked)} id="admin-is-member" style={{ cursor: 'pointer' }} />
+              <label htmlFor="admin-is-member" style={{ fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>Anggota Terdaftar</label>
+            </div>
+            {isMember ? (
+              <div style={{ flex: 1, minWidth: '180px' }}>
+                <input type="text" value={memberCode} onChange={(e) => setMemberCode(e.target.value)} placeholder="Kode: ANG-00001" className="input-base" required />
+              </div>
+            ) : (
+              <div style={{ flex: 1, minWidth: '180px' }}>
+                <input type="text" value={visitorName} onChange={(e) => setVisitorName(e.target.value)} placeholder="Nama pengunjung" className="input-base" required />
+              </div>
+            )}
+            <div style={{ minWidth: '180px' }}>
+              <select value={purpose} onChange={(e) => setPurpose(e.target.value)} className="input-base" style={{ cursor: 'pointer' }}>
+                <option>Membaca buku</option><option>Meminjam buku</option><option>Mengembalikan buku</option><option>Mengerjakan tugas</option><option>Penelitian</option><option>Lainnya</option>
+              </select>
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ padding: '10px 20px', borderRadius: '10px', whiteSpace: 'nowrap' }}>Check In</button>
+          </form>
         </div>
       )}
 
